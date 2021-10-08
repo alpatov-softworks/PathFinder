@@ -206,6 +206,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="imgui\misc\imgui_freetype.h" />
     <ClInclude Include="SDK\CBaseEntity.h" />
+    <ClInclude Include="SDK\ClientBase.h" />
     <ClInclude Include="SDK\EngineBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

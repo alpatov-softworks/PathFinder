@@ -25,18 +25,19 @@ public:
 	};
 void AimAt(ImVec3 targetpos)
 	{
-		ImVec3 myPos = this->m_vecOrigin;
+		ImVec3 myPos = this->m_vecOrigin + this->m_vecViewOffset;
+
 	    float distance = sqrtf(powf(targetpos.x - myPos.x, 2) + powf(targetpos.y - myPos.y, 2) + powf(targetpos.z - myPos.z, 2));
 
 		float pitch = -asinf((targetpos.z - myPos.z) / distance) * (180 / 3.1415926f);
-		float yaw = atan2f(targetpos.y - myPos.y, targetpos.x - myPos.x) * (180 / 3.1415926f);
+		float yaw =   atan2f(targetpos.y - myPos.y, targetpos.x - myPos.x) * (180 / 3.1415926f);
 
 
 		if ((-89.f <= pitch) && (pitch <= 89.f) && (-180.f <= yaw) && (yaw <= 180.f))
 		{
-				auto viewangles = this->GetViewAngles();
-				viewangles->x = pitch;
-				viewangles->y = yaw;
+			auto viewangles = (ImVec3*)( (DWORD)GetModuleHandle("engine.dll") + 0x46546C);
+			viewangles->x = pitch;
+			viewangles->y = yaw;
 
 		}
 	}

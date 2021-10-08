@@ -95,5 +95,8 @@
     <ClInclude Include="SDK\EngineBase.h">
       <Filter>SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\ClientBase.h">
+      <Filter>SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
