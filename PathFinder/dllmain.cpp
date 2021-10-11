@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
 #include <d3d9.h>
 #include "imgui/imgui.h"
@@ -14,25 +14,29 @@ DWORD WINAPI LoadThread(HMODULE h_module)
     
     auto end_scene_addr = (DWORD)(GetModuleHandle("d3d9.dll")) + 0x63130;
 
+
     MH_CreateHook((LPVOID)end_scene_addr, &hooks::hkEndScene, reinterpret_cast<LPVOID*>(&hooks::oEndScene));
     MH_EnableHook((LPVOID)end_scene_addr);
 
-    CBaseEntity* local_player = *(CBaseEntity**)((DWORD)(GetModuleHandle("client.dll")) + 0xC3F650);
     ClientBase* client = (ClientBase*)GetModuleHandle("client.dll");
+
     while (!GetAsyncKeyState(VK_END))
     {
-        if (GetAsyncKeyState(VK_INSERT) & 1)
+        if (GetAsyncKeyState(VK_XBUTTON1) & 1)
         {
-            hooks::positions.push_back(local_player->m_vecOrigin);
+            hooks::positions.push_back(client->LocalPlayer->m_vecOrigin);
         }
         else if (GetAsyncKeyState(VK_DELETE) & 1)
         {
             client->m_ForceForward = 1;
-            for (auto pos : hooks::positions)
+
+            while (client->LocalPlayer->m_vecOrigin.DistTo(ImVec3(1069, -185, 76)) > 200)
             {
-                while (pos.DistTo(local_player->m_vecOrigin) > 50)
+                auto current_pos = hooks::GetClosestPoint(client->LocalPlayer->m_vecOrigin, ImVec3(1069, -185, 76), hooks::positions);
+
+                while (client->LocalPlayer->m_vecOrigin.DistTo(current_pos) > 250 and !client->LocalPlayer->m_bDead)
                 {
-                    local_player->AimAt(pos + local_player->m_vecViewOffset);
+                    client->LocalPlayer->AimAt(current_pos + client->LocalPlayer->m_vecViewOffset);
                 }
             }
             client->m_ForceForward = 0;
@@ -41,9 +45,9 @@ DWORD WINAPI LoadThread(HMODULE h_module)
 
     }
     MH_DisableHook((LPVOID)end_scene_addr);
+    Sleep(1000);
     MH_RemoveHook((LPVOID)end_scene_addr);
     MH_Uninitialize();
-    Sleep(100);
 
     ImGui_ImplWin32_Shutdown();
     ImGui_ImplDX9_Shutdown();

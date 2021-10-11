@@ -1,3 +1,4 @@
+#pragma once
 #include "../Utils/ImVec3.h"
 
 #define STR_MERGE_IMPL(a, b) a##b
@@ -35,10 +36,9 @@ void AimAt(ImVec3 targetpos)
 
 		if ((-89.f <= pitch) && (pitch <= 89.f) && (-180.f <= yaw) && (yaw <= 180.f))
 		{
-			auto viewangles = (ImVec3*)( (DWORD)GetModuleHandle("engine.dll") + 0x46546C);
+			auto viewangles = (ImVec3*)( (DWORD)GetModuleHandle("engine.dll") + 0x465464);
 			viewangles->x = pitch;
 			viewangles->y = yaw;
-
 		}
 	}
 };

@@ -1,5 +1,4 @@
 #include "Hooks.h"
-#include "../SDK/EngineBase.h"
 
 
 ImVec3 WorldToScreen(ImVec3 pos)
@@ -11,7 +10,7 @@ ImVec3 WorldToScreen(ImVec3 pos)
 	float _x = dwViewmatrix[0][0] * pos.x + dwViewmatrix[0][1] * pos.y + dwViewmatrix[0][2] * pos.z + dwViewmatrix[0][3];
 	float _y = dwViewmatrix[1][0] * pos.x + dwViewmatrix[1][1] * pos.y + dwViewmatrix[1][2] * pos.z + dwViewmatrix[1][3];
 	float _z = dwViewmatrix[2][0] * pos.x + dwViewmatrix[2][1] * pos.y + dwViewmatrix[2][2] * pos.z + dwViewmatrix[2][3];
-	float w = dwViewmatrix[3][0] * pos.x + dwViewmatrix[3][1] * pos.y + dwViewmatrix[3][2] * pos.z + dwViewmatrix[3][3];
+	float w  = dwViewmatrix[3][0] * pos.x + dwViewmatrix[3][1] * pos.y + dwViewmatrix[3][2] * pos.z + dwViewmatrix[3][3];
 
 
 	float x = (window_size.x / 2 * (_x / w)) + ((_x / w) + window_size.x / 2);
@@ -20,6 +19,35 @@ ImVec3 WorldToScreen(ImVec3 pos)
 
 	return ImVec3(x, y, w);
 }
+
+ImVec3 hooks::GetClosestPoint(ImVec3 current_position, ImVec3 dest, std::vector<ImVec3>& positions)
+{
+	std::vector<ImVec3> temp;
+
+	for (auto& pos : positions)
+	{
+		if (current_position.DistTo(pos) > 20 and current_position.DistTo(dest) > pos.DistTo(dest))
+			temp.push_back(pos);
+	}
+
+	for (int i = 0; i < temp.size(); i++)
+	{
+		for (int j = 0; j < temp.size() - 1; j++)
+		{
+
+			if (current_position.DistTo(temp[j]) > current_position.DistTo(temp[j + 1]))
+			{
+				const auto& b = temp[j];
+				temp[j] = temp[j + 1];
+				temp[j + 1] = b;
+			}
+		}
+	}
+	if (!temp.empty())
+		return temp[0];
+	return dest;
+}
+
 
 bool init = false;
 long __stdcall hooks::hkEndScene(LPDIRECT3DDEVICE9 p_device)
@@ -38,19 +66,19 @@ long __stdcall hooks::hkEndScene(LPDIRECT3DDEVICE9 p_device)
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	if (positions.size() > 2)
+	for (int i = 0; i < positions.size(); i++)
 	{
-		for (int i = 0; i < positions.size() - 1; i++)
-		{
-			ImVec3 pos1, pos2;
-			pos1 = WorldToScreen(positions[i]);
-			pos2 = WorldToScreen(positions[i + 1]);
-
-			if (pos1.z > 0 and pos2.z > 0)
-				ImGui::GetBackgroundDrawList()->AddLine(pos1, pos2, ImColor(255, 255, 255));
-		}
+			auto pos1 = WorldToScreen(positions[i]);
+			if (pos1.z > 0)
+				ImGui::GetBackgroundDrawList()->AddText(pos1, ImColor(255, 255, 255), std::format("{}", positions[i].DistTo(ImVec3(1069, -185, 76))).c_str());
 	}
-
+	if (positions.size() > 5)
+	{
+		ClientBase* client = (ClientBase*)GetModuleHandle("client.dll");
+		auto pos = WorldToScreen(GetClosestPoint(client->LocalPlayer->m_vecOrigin, ImVec3(1069, -185, 76), positions));
+		if (pos.z > 0)
+			ImGui::GetBackgroundDrawList()->AddLine(pos, ImVec2(1920/ 2, 1080), ImColor(255, 0, 0));
+	}
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
