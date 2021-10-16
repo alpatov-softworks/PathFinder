@@ -30,14 +30,9 @@ DWORD WINAPI LoadThread(HMODULE h_module)
         {
             client->m_ForceForward = 1;
 
-            while (client->LocalPlayer->m_vecOrigin.DistTo(ImVec3(1069, -185, 76)) > 200)
+            while (client->LocalPlayer->m_vecOrigin.DistTo(ImVec3(0, 0, 0)) > 200)
             {
-                auto current_pos = hooks::GetClosestPoint(client->LocalPlayer->m_vecOrigin, ImVec3(1069, -185, 76), hooks::positions);
-
-                while (client->LocalPlayer->m_vecOrigin.DistTo(current_pos) > 250 and !client->LocalPlayer->m_bDead)
-                {
-                    client->LocalPlayer->AimAt(current_pos + client->LocalPlayer->m_vecViewOffset);
-                }
+                client->LocalPlayer->AimAt(hooks::GetClosestPoint(client->LocalPlayer->m_vecOrigin, ImVec3(0, 0, 0), hooks::positions) + client->LocalPlayer->m_vecViewOffset);
             }
             client->m_ForceForward = 0;
         }
