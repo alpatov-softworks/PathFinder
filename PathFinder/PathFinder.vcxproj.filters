@@ -25,6 +25,12 @@
     <Filter Include="SDK">
       <UniqueIdentifier>{c4d34c33-1d7b-4c85-9dcb-fe98f0e4306a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DirectX9">
+      <UniqueIdentifier>{fe378782-6452-4cc5-9aea-f23e8e7ea576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPather">
+      <UniqueIdentifier>{e2504738-3e81-4271-bba0-fdfa9e9de322}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -51,11 +57,14 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\misc\imgui_freetype.cpp">
-      <Filter>ImGui\misc</Filter>
-    </ClCompile>
     <ClCompile Include="hooks\Hooks.cpp">
       <Filter>Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX9\CustomDirectX9Device.cpp">
+      <Filter>DirectX9</Filter>
+    </ClCompile>
+    <ClCompile Include="Pather\CPather.cpp">
+      <Filter>CPather</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +92,6 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\misc\imgui_freetype.h">
-      <Filter>ImGui\misc</Filter>
-    </ClInclude>
     <ClInclude Include="hooks\Hooks.h">
       <Filter>Hooks</Filter>
     </ClInclude>
@@ -97,6 +103,18 @@
     </ClInclude>
     <ClInclude Include="SDK\ClientBase.h">
       <Filter>SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX9\CustomDirectX9Device.h">
+      <Filter>DirectX9</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\xorstr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pather\CPather.h">
+      <Filter>CPather</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

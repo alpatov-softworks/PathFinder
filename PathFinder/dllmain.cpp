@@ -1,23 +1,16 @@
-﻿#pragma once
-#include <Windows.h>
+﻿#include <Windows.h>
 #include <d3d9.h>
 #include "imgui/imgui.h"
 #include "hooks/Hooks.h"
 #include "MinHook.h"
 #include "SDK/CBaseEntity.h"
 #include "SDK/ClientBase.h"
+#include "Utils/memory.h"
 
 
 DWORD WINAPI LoadThread(HMODULE h_module)
 {
-    MH_Initialize();
-    
-    auto end_scene_addr = (DWORD)(GetModuleHandle("d3d9.dll")) + 0x63130;
-
-
-    MH_CreateHook((LPVOID)end_scene_addr, &hooks::hkEndScene, reinterpret_cast<LPVOID*>(&hooks::oEndScene));
-    MH_EnableHook((LPVOID)end_scene_addr);
-
+    hooks::Initialize();
     ClientBase* client = (ClientBase*)GetModuleHandle("client.dll");
 
     while (!GetAsyncKeyState(VK_END))
@@ -28,10 +21,9 @@ DWORD WINAPI LoadThread(HMODULE h_module)
         }
         else if (GetAsyncKeyState(VK_DELETE) & 1)
         {
-            client->m_ForceForward = 1;
-
             while (client->LocalPlayer->m_vecOrigin.DistTo(ImVec3(0, 0, 0)) > 200)
             {
+                client->m_ForceForward = 1;
                 client->LocalPlayer->AimAt(hooks::GetClosestPoint(client->LocalPlayer->m_vecOrigin, ImVec3(0, 0, 0), hooks::positions) + client->LocalPlayer->m_vecViewOffset);
             }
             client->m_ForceForward = 0;
@@ -39,15 +31,11 @@ DWORD WINAPI LoadThread(HMODULE h_module)
         Sleep(10);
 
     }
-    MH_DisableHook((LPVOID)end_scene_addr);
-    Sleep(1000);
-    MH_RemoveHook((LPVOID)end_scene_addr);
-    MH_Uninitialize();
+    hooks::DetchHooks();
 
     ImGui_ImplWin32_Shutdown();
     ImGui_ImplDX9_Shutdown();
     ImGui::DestroyContext();
-
 
     FreeLibraryAndExitThread(h_module, 0);
 }

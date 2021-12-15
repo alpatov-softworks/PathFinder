@@ -10,13 +10,22 @@
 #include "../SDK/ClientBase.h"
 #include <string>
 #include <format>
+#include "../DirectX9/CustomDirectX9Device.h"
+#include "../Utils/memory.h"
+#include "MinHook.h"
+#include "../Utils/xorstr.h"
+#include <fstream>
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace hooks
 {
 
 	ImVec3 GetClosestPoint(ImVec3 current_position, ImVec3 dest, std::vector<ImVec3>& positions);
-
-	inline DWORD oEndScene = NULL;
+	void Initialize();
+	void DetchHooks();
+	inline DWORD oPresent = NULL;
+	inline DWORD oWndProc = NULL;
 	inline std::vector<ImVec3> positions;
-	long __stdcall hkEndScene(LPDIRECT3DDEVICE9 p_device);
+	int __stdcall hkPresent(CustomDirect3D9Device* pDevice, int a2, int a3, int a4, int a5);
+	LRESULT WINAPI WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 }
